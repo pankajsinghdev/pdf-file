@@ -1,0 +1,12 @@
+{
+  "extends": "@repo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "include": [
+    "src",
+    "../../apps/frontend/src/components/ui/input.tsx",
+    "../../apps/frontend/src/components/ui/label.tsx"
+  ],
+  "exclude": ["node_modules", "dist"]
+}
