@@ -26,9 +26,9 @@ export default function Home() {
           className={buttonVariants({
             size: "lg",
             className: "mt-5",
+            variant: "blue",
           })}
           style={{
-            backgroundColor: "var(--color-blue-600)",
             color: "white",
             fontWeight: "bold",
           }}

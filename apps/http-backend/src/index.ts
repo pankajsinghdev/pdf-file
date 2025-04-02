@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { prisma } from "@repo/db/client";
+import { db } from "@repo/db/client";
 
 const app = express();
 const port = 3000;
@@ -12,17 +12,9 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.post("/user", (req: Request, res: Response) => {
-  const { username, password, last_name, first_name, email } = req.body;
+  const { username } = req.body;
 
-  const user = prisma.user.create({
-    data: {
-      username,
-      first_name,
-      last_name,
-      email,
-      password,
-    },
-  });
+  const user = { username: username };
 
   res.send({
     user,
@@ -30,7 +22,7 @@ app.post("/user", (req: Request, res: Response) => {
 });
 
 app.get("/user", (req: Request, res: Response) => {
-  const users = prisma.user.findMany();
+  const users = db.user.findMany();
 
   res.send({
     users,

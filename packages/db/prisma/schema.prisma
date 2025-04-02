@@ -14,18 +14,30 @@ datasource db {
 }
 
 model User {
-  id         String    @id @unique @default(uuid())
-  username   String
-  first_name String
-  last_name  String?
-  email      String    @unique
-  password   String
-  sessions   Session[]
+  id                    String    @id @unique
+  email                 String    @unique
+  File                  File[]
+  stripeCustomerId      String?   @unique @map(name: "stripe_customer_id")
+  stripeSubscriptionId  String?   @unique @map(name: "stripe_subscription_id")
+  stripePriceId         String?   @unique @map(name: "stripe_price_id")
+  stripeCurrenPeriodEnd DateTime? @map(name: "stripe current_period_end")
 }
 
-model Session {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  FAILED
+  STATUS
+}
+
+model File {
+  id           String       @id @default(uuid())
+  name         String
+  uploadStatus UploadStatus @default(PENDING)
+  url          String
+  key          String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  User         User?        @relation(fields: [userId], references: [id])
+  userId       String?
 }
