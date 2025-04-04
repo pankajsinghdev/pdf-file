@@ -70,9 +70,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
+    <div className="w-full bg-white  rounded-md shadow flex flex-col items-center">
       <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 font-semibold">
           <Button
             aria-label="previous page"
             disabled={numPages === undefined || currPage === 1}
@@ -80,6 +80,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               setCurrPage((prev) => (prev - 1 > 1 ? prev - 1 : 1));
               setValue("page", String(currPage - 1));
             }}
+            variant={"ghost"}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -113,6 +114,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               );
               setValue("page", String(currPage + 1));
             }}
+            variant={"ghost"}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -156,6 +158,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           <Button
             onClick={() => setRotation((prev) => prev + 90)}
             aria-label="rotate 90 degree"
+            variant={"ghost"}
           >
             <RotateCw className="h-4 w-4" />
           </Button>
