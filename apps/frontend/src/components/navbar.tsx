@@ -3,6 +3,7 @@ import MaxWidthWrapper from "./max-width-wrapper";
 import { buttonVariants } from "./ui/button";
 import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server";
 import { ArrowRight } from "lucide-react";
+import { Logo } from "./ui/logo";
 
 const Navbar = () => {
   return (
@@ -10,7 +11,9 @@ const Navbar = () => {
       <MaxWidthWrapper>
         <div className="flex h-14 items-center justify-between border-b border-zinc-200">
           <Link href={"/"} className="flex z-40 font-semibold">
-            <span>.pdfFile</span>
+            <span>
+              <Logo />
+            </span>
           </Link>
           {/* {mobile navbar} */}
           <div className="hidden items-center space-x-4 sm:flex">
@@ -35,7 +38,7 @@ const Navbar = () => {
               <RegisterLink
                 className={buttonVariants({
                   size: "sm",
-                  variant: "blue",
+                  variant: "default",
                 })}
                 style={{
                   color: "white",

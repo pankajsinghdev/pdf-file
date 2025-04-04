@@ -1,13 +1,14 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import UploadButton from "./ui/UploadButton";
+import UploadButton from "./UploadButton";
 import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 const Dashboard = () => {
   const [currentlyDeletingFile, setCurrentlyDeletingFile] = useState<
@@ -20,6 +21,9 @@ const Dashboard = () => {
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     onSuccess: () => {
       utils.getUserFiles.invalidate();
+      toast.success("Deleted", {
+        position: "top-center",
+      });
     },
     onMutate: ({ id }) => {
       setCurrentlyDeletingFile(id);

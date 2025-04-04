@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/navbar";
 import Provider from "@/components/providers";
 import "react-loading-skeleton/dist/skeleton.css";
+import { ToastContainer } from "react-toastify";
+import "simplebar-react/dist/simplebar.min.css";
 
 export default function RootLayout({
   children,
@@ -20,6 +22,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         > */}
+          <ToastContainer />
           <Navbar />
           {children}
           {/* </ThemeProvider> */}

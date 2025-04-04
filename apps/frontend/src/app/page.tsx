@@ -4,16 +4,19 @@ import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
   return (
     <>
       <MaxWidthWrapper className="mb-12 mt-28 sm:wt-40 flex flex-col items-center justify-center text-center">
         <div className="mx-auto mb-4 max-w-fit items-end justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50">
-          <p className="text-sm font-semibold text-gray-700">PDfFile</p>
+          <div className="text-sm font-semibold text-gray-700">
+            <Logo />
+          </div>
         </div>
         <h1 className=" max-w-4xl text-5xl font-bold md:text-6xl lg-text-7xl">
-          Chat with your <span className="text-blue-600">documents</span> in
+          Chat with your <span className="text-primary">documents</span> in
           seconds
         </h1>
         <p className="mt-5 max-w-prose text-zinc-500 sm:text-lg">
@@ -26,7 +29,7 @@ export default function Home() {
           className={buttonVariants({
             size: "lg",
             className: "mt-5",
-            variant: "blue",
+            variant: "default",
           })}
           style={{
             color: "white",
@@ -96,7 +99,7 @@ export default function Home() {
         <ol className="my-8 space-y-4 pt-8 md:flex md:space-z-12 md:space-y-0 gap-4">
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-1-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 1</span>
+              <span className="text-sm font-medium text-primary">Step 1</span>
               <span className="text-xl font-semibold ">
                 Sign up for an account
               </span>
@@ -104,7 +107,7 @@ export default function Home() {
                 Either starting out with a free plan or choose our{" "}
                 <Link
                   href={"/pricing"}
-                  className="text-blue-700 underline underline-offset-2"
+                  className="text-primary underline underline-offset-2"
                 >
                   pro plan
                 </Link>
@@ -114,7 +117,7 @@ export default function Home() {
           </li>
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-1-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 2</span>
+              <span className="text-sm font-medium text-primary">Step 2</span>
               <span className="text-xl font-semibold ">
                 Upload your PDF file
               </span>
@@ -126,7 +129,7 @@ export default function Home() {
           </li>
           <li className="md:flex-1">
             <div className="flex flex-col space-y-2 border-1-4 border-zinc-300 py-2 pl-4 md:border-l-0 md:border-t-2 md:pl-0 md:pt-4">
-              <span className="text-sm font-medium text-blue-600">Step 3</span>
+              <span className="text-sm font-medium text-primary">Step 3</span>
               <span className="text-xl font-semibold ">
                 Start asking question
               </span>

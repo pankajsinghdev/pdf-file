@@ -1,0 +1,13 @@
+[
+  {
+    "origin": ["http://localhost:3000", "https://your-production-domain.com"],
+    "method": ["GET", "HEAD", "PUT", "POST", "DELETE"],
+    "responseHeader": [
+      "Content-Type",
+      "Content-MD5",
+      "Authorization",
+      "x-goog-meta-filename"
+    ],
+    "maxAgeSeconds": 3600
+  }
+]
