@@ -5,7 +5,11 @@ import { db } from "@repo/db/client";
 import { z } from "zod";
 import { Storage } from "@google-cloud/storage";
 import { v4 as uuid } from "uuid";
+import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { PineconeStore } from "@langchain/pinecone";
 
+import { pinecone } from "@/lib/pinecone";
 // Initialize Google Cloud Storage
 const storage = new Storage({
   projectId: process.env.GCS_PROJECT_ID,
@@ -114,10 +118,42 @@ export const appRouter = router({
           name: input.name,
           key: fileName,
           userId,
-          url: ` https://storage.googleapis.com/${bucket.name}/${fileName}`,
+          url: `https://storage.googleapis.com/${bucket.name}/${fileName}`,
           uploadStatus: "PROCESSING",
         },
       });
+
+      try {
+        const response = await fetch(
+          `https://storage.googleapis.com/${bucket.name}/${fileName}`
+        );
+        const blob = await response.blob();
+
+        const loader = new PDFLoader(blob);
+        const pageLevelDocs = await loader.load();
+        const pagesAmt = pageLevelDocs.length;
+
+        //vectorization
+
+        const pineconeIndex = pinecone.Index("pdffile");
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY,
+        });
+        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: file.id,
+        });
+      } catch (err) {
+        await db.file.update({
+          where: {
+            id: file.id,
+            userId,
+          },
+          data: {
+            uploadStatus: "FAILED",
+          },
+        });
+      }
 
       return {
         signedUrl,
