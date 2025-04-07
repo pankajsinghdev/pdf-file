@@ -18,13 +18,15 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
   const { mutateAsync: startUpload } = trpc.uploadFile.useMutation();
   const { mutateAsync: processing } = trpc.processInPinecone.useMutation({
     onSuccess: () => {
-      toast.success("File processed successfully", {
+      toast.success("PDF processed successfully", {
         position: "top-center",
+        autoClose: 2000,
       });
     },
     onError: () => {
-      toast.error("Error While Processing File , Please try again later ", {
+      toast.error("Error While Processing PDF, Please try again later ", {
         position: "top-center",
+        autoClose: 2000,
       });
     },
   });
@@ -35,6 +37,7 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
     onError: () => {
       toast.error("Error while polling.  Please try again later", {
         position: "top-center",
+        autoClose: 2000,
       });
     },
     retry: true,
@@ -82,8 +85,9 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
       });
 
       if (!uploadResponse.ok) {
-        toast.error("Failed to upload file. Please try again later.", {
+        toast.error("Failed to upload PDF. Please try again later.", {
           position: "top-center",
+          autoClose: 2000,
         });
       } else {
         setUploadProgress(100);
@@ -97,10 +101,15 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
       // Invalidate cache to refresh file list
       utils.getUserFiles.invalidate();
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error(error instanceof Error ? error.message : "Upload failed", {
-        position: "top-center",
-      });
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Error occured while uploading pdf",
+        {
+          position: "top-center",
+          autoClose: 2000,
+        }
+      );
     } finally {
       clearInterval(progressInterval);
       setIsUploading(false);
@@ -119,8 +128,9 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
       maxSize={4 * 1024 * 1024} // 4MB
       onDrop={handleFileDrop}
       onDropRejected={() => {
-        toast.warning("File rejected", {
+        toast.warning("PDF rejected", {
           position: "top-center",
+          autoClose: 2000,
         });
       }}
       disabled={isUploading}

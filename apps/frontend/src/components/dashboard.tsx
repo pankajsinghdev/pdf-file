@@ -21,8 +21,9 @@ const Dashboard = () => {
   const { mutate: deleteFile } = trpc.deleteFile.useMutation({
     onSuccess: () => {
       utils.getUserFiles.invalidate();
-      toast.success("Deleted", {
+      toast.success("File deleted successfully.", {
         position: "top-center",
+        autoClose: 2000,
       });
     },
     onMutate: ({ id }) => {

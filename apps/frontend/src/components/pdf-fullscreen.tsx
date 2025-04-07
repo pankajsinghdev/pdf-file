@@ -48,13 +48,14 @@ const PdfFullScreen = ({ fileUrl }: PdfFullScreenProps) => {
               onLoadError={() => {
                 toast.error("Error Loading PDF", {
                   position: "top-center",
+                  autoClose: 2000,
                 });
               }}
               file={fileUrl}
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               className="max-h-full"
             >
-              { new Array(numPages).fill(0).map((_, i) => (
+              {new Array(numPages).fill(0).map((_, i) => (
                 <Page
                   key={i}
                   width={width ? Math.min(width, 1200) : 1}

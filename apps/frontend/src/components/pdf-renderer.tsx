@@ -176,6 +176,7 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
               onLoadError={() => {
                 toast.error("Error Loading PDF", {
                   position: "top-center",
+                  autoClose: 2000,
                 });
               }}
               file={url}
