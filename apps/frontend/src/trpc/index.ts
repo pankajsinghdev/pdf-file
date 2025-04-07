@@ -3,23 +3,12 @@ import { privateProcedure, publicProcedure, router } from "./trpc";
 import { TRPCError } from "@trpc/server";
 import { db } from "@repo/db/client";
 import { z } from "zod";
-import { Storage } from "@google-cloud/storage";
 import { v4 as uuid } from "uuid";
+import { bucket, generateSignedUrl } from "@/lib/storage";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-
-import { pinecone } from "@/lib/pinecone";
-// Initialize Google Cloud Storage
-const storage = new Storage({
-  projectId: process.env.GCS_PROJECT_ID,
-  credentials: {
-    client_email: process.env.GCS_CLIENT_EMAIL,
-    private_key: process.env.GCS_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-  },
-});
-
-const bucket = storage.bucket(process.env.GCS_BUCKET_NAME as string);
+import { OpenAIEmbeddings } from "@langchain/openai";
+import { pinecone, pineconeIndex } from "@/lib/pinecone";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -27,7 +16,6 @@ export const appRouter = router({
     const user = await getUser();
 
     if (!user || !user.email) {
-      console.log("UNAUTHORIZED");
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
 
@@ -85,7 +73,7 @@ export const appRouter = router({
       });
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
-      return file;
+      return { file };
     }),
 
   uploadFile: privateProcedure
@@ -111,7 +99,6 @@ export const appRouter = router({
         expires: Date.now() + 15 * 60 * 1000, // 15 minutes
         contentType: input.type,
       });
-      console.log("signed url", signedUrl, "filename", fileName);
       // Create file record in database
       const file = await db.file.create({
         data: {
@@ -123,41 +110,10 @@ export const appRouter = router({
         },
       });
 
-      try {
-        const response = await fetch(
-          `https://storage.googleapis.com/${bucket.name}/${fileName}`
-        );
-        const blob = await response.blob();
-
-        const loader = new PDFLoader(blob);
-        const pageLevelDocs = await loader.load();
-        const pagesAmt = pageLevelDocs.length;
-
-        //vectorization
-
-        const pineconeIndex = pinecone.Index("pdffile");
-        const embeddings = new OpenAIEmbeddings({
-          openAIApiKey: process.env.OPENAI_API_KEY,
-        });
-        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
-          pineconeIndex,
-          namespace: file.id,
-        });
-      } catch (err) {
-        await db.file.update({
-          where: {
-            id: file.id,
-            userId,
-          },
-          data: {
-            uploadStatus: "FAILED",
-          },
-        });
-      }
-
       return {
         signedUrl,
         fileId: file.id,
+        fileName: file.key,
       };
     }),
 
@@ -168,9 +124,7 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      console.log("start", input);
       const { userId } = ctx;
-      console.log("completing", userId);
 
       const file = await db.file.update({
         where: {
@@ -181,8 +135,66 @@ export const appRouter = router({
           uploadStatus: "SUCCESS",
         },
       });
-      console.log("completed");
       return { file };
+    }),
+
+  processInPinecone: privateProcedure
+    .input(
+      z.object({
+        fileName: z.string(),
+        fileId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      try {
+        const googleSignedURL = await generateSignedUrl(input.fileName);
+
+        const response = await fetch(googleSignedURL);
+
+        const blob = await response.blob();
+
+        if (blob.type !== "application/pdf") {
+          throw new TRPCError({code : "BAD_REQUEST"});
+        }
+
+        const loader = new PDFLoader(blob);
+
+        const pageLevelDocs = await loader.load();
+
+        const pineconeIndex = pinecone.index("pdffileindex");
+
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY,
+        });
+        // Create file record in database
+        await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+          pineconeIndex,
+          namespace: input.fileName,
+        });
+
+        await db.file.update({
+          where: {
+            id: input.fileId,
+            userId,
+          },
+          data: {
+            uploadStatus: "SUCCESS",
+          },
+        });
+        return { success: true };
+      } catch (err) {
+        await db.file.update({
+          where: {
+            id: input.fileId,
+            userId,
+          },
+          data: {
+            uploadStatus: "SUCCESS",
+          },
+        });
+        return { success: false };
+      }
     }),
 
   deleteFile: privateProcedure
@@ -201,6 +213,9 @@ export const appRouter = router({
 
       // Delete from Google Cloud Storage
       await bucket.file(file.key).delete();
+
+      // Delete from pinecone db
+      await pineconeIndex.namespace(file.key).deleteAll();
 
       // Delete from database
       await db.file.delete({

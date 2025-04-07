@@ -63,7 +63,6 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     },
     resolver: zodResolver(CustomPageValidator),
   });
-  console.log("errors", errors);
   const handlePageSubmit = ({ page }: TCustomPageValidator) => {
     setCurrPage(Number(page));
     setValue("page", String(page));

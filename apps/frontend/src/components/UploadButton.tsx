@@ -16,10 +16,26 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
   const router = useRouter();
 
   const { mutateAsync: startUpload } = trpc.uploadFile.useMutation();
-  const { mutateAsync: completeUpload } = trpc.completeUpload.useMutation();
+  const { mutateAsync: processing } = trpc.processInPinecone.useMutation({
+    onSuccess: () => {
+      toast.success("File processed successfully", {
+        position: "top-center",
+      });
+    },
+    onError: () => {
+      toast.error("Error While Processing File , Please try again later ", {
+        position: "top-center",
+      });
+    },
+  });
   const { mutateAsync: startPolling } = trpc.getFile.useMutation({
-    onSuccess: (file) => {
+    onSuccess: ({ file }) => {
       router.push(`/dashboard/${file.id}`);
+    },
+    onError: () => {
+      toast.error("Error while polling.  Please try again later", {
+        position: "top-center",
+      });
     },
     retry: true,
     retryDelay: 300,
@@ -33,9 +49,9 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
           clearInterval(interval);
           return prev;
         }
-        return prev + 5;
+        return prev + 1;
       });
-    }, 500);
+    }, 100);
     return interval;
   };
 
@@ -50,13 +66,11 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
 
     try {
       // Step 1: Get signed URL from backend
-      const { signedUrl, fileId } = await startUpload({
+      const { signedUrl, fileId, fileName } = await startUpload({
         name: file.name,
         type: file.type,
         size: file.size,
       });
-
-      console.log("signed url", signedUrl, "fileId", fileId);
 
       // Step 2: Upload directly to GCS using the signed URL
       const uploadResponse = await fetch(signedUrl, {
@@ -71,18 +85,17 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
         toast.error("Failed to upload file. Please try again later.", {
           position: "top-center",
         });
+      } else {
+        setUploadProgress(100);
+        //polling so that we can redirecting
+        await startPolling({ id: fileId });
       }
 
-      setUploadProgress(100);
-      startPolling({ id: fileId });
-
-      // Step 3: Mark upload as complete in our database
-      await completeUpload({ fileId });
+      //processing in pinecone
+      await processing({ fileName, fileId });
 
       // Invalidate cache to refresh file list
       utils.getUserFiles.invalidate();
-
-      toast.success("Upload successful", { position: "top-center" });
     } catch (error) {
       console.error("Upload error:", error);
       toast.error(error instanceof Error ? error.message : "Upload failed", {
@@ -107,7 +120,6 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
       onDrop={handleFileDrop}
       onDropRejected={() => {
         toast.warning("File rejected", {
-          // description: "Please upload a single PDF file under 4MB",
           position: "top-center",
         });
       }}

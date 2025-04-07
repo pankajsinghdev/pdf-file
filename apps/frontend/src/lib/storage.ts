@@ -9,7 +9,7 @@ const storage = new Storage({
   },
 });
 
-const bucket = storage.bucket(process.env.GCS_BUCKET_NAME as string);
+export const bucket = storage.bucket(process.env.GCS_BUCKET_NAME as string);
 
 // export const uploadFile = (file: Express.Multer.File) => {
 //   return new Promise((resolve, reject) => {

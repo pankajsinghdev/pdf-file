@@ -26,7 +26,6 @@ const Page = async ({ params }: PageProps) => {
     },
   });
   if (!file) notFound();
-  console.log("file url", file.url);
   const signedUrl = await generateSignedUrl(file.key);
   return (
     <div className="flex-1 justify-between flex flex-col h-[calc(100vh-3.5rem)]">
