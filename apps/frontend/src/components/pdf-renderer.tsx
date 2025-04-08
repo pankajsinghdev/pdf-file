@@ -127,7 +127,20 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
                 {scale * 100}%<ChevronDown className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent>
+              <DropdownMenuItem
+                onSelect={() => setScale(0.5)}
+                className="bg-white"
+              >
+                50%
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => setScale(0.75)}
+                className="bg-white"
+              >
+                75%
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => setScale(1)}
                 className="bg-white"

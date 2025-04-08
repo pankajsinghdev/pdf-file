@@ -4,6 +4,7 @@ import TextAreaAutoSize, {
 } from "react-textarea-autosize";
 
 import { cn } from "@/lib/utils";
+import { Ref } from "react";
 
 function Textarea({ className, ...props }: TextareaAutosizeProps) {
   return (

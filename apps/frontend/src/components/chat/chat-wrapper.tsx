@@ -7,6 +7,7 @@ import { UploadStatus } from "@repo/db/client";
 import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
+import { ChatContextProvider } from "./chat-context";
 
 interface ChatWrapperProps {
   fileId: string;
@@ -94,12 +95,14 @@ const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
   }
 
   return (
-    <div className="flex relative min-h-[calc(100vh-3.5rem)] bg-zinc-50 divide-y divide-zinc-200 flex-col justify-between gap-2">
-      <div className="flex-1 justify-between flex flex-col mb-28">
-        <Messages />
+    <ChatContextProvider fileId={fileId}>
+      <div className="flex relative min-h-[calc(100vh-3.5rem)] bg-zinc-50 divide-y divide-zinc-200 flex-col justify-between gap-2">
+        <div className="flex-1 justify-between flex flex-col mb-28">
+          <Messages fileId={fileId} />
+        </div>
+        <ChatInput />
       </div>
-      <ChatInput />
-    </div>
+    </ChatContextProvider>
   );
 };
 

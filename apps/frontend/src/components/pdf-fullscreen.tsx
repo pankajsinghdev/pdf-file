@@ -24,7 +24,7 @@ const PdfFullScreen = ({ fileUrl }: PdfFullScreenProps) => {
           <Expand className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] w-screen max-h-[90vh] min-w-2/4 h-full bg-white ">
+      <DialogContent className="max-w-[95vw] w-screen max-h-[90vh] min-w-3/5 h-full bg-white ">
         {/* <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
           <X
             className="h-4 w-4 cursor-pointer"

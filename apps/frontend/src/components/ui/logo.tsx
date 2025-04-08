@@ -2,9 +2,13 @@
 
 import useWindowDimension from "@/app/hooks/useWindowDimension";
 import { cn } from "@/lib/utils";
-import { FileText } from "lucide-react";
+import { FileText, LucideProps } from "lucide-react";
 
-export const Logo = () => {
+interface LogoProps {
+  props?: LucideProps;
+}
+
+export const Logo = ({ props }: LogoProps) => {
   const windowSize = useWindowDimension();
 
   const logoSize = () => {
@@ -27,10 +31,11 @@ export const Logo = () => {
           ? "text-2xl"
           : windowSize === "mid"
             ? "text-3xl"
-            : "text-5xl"
+            : "text-5xl",
+        props
       )}
     >
-      <FileText size={logoSize()} className="text-rose-500" />
+      <FileText {...props} size={logoSize()} className="text-rose-500" />
       <span className="text-rose-500"> Pdf </span>
       <span>File</span>
     </div>

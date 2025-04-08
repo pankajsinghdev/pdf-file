@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Button } from "./ui/button";
@@ -162,8 +164,8 @@ const UploadDropZone = ({ isOpen }: { isOpen: boolean }) => {
                         }
                       />
                       {uploadProgress === 100 ? (
-                        <p className="flex-1 gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-1">
-                          <Loader2 className="h-3 w-3 animate-spin" />{" "}
+                        <p className="flex-1 gap-1  items-center flex justify-center text-sm text-zinc-700 text-center pt-1">
+                          <Loader2 className="h-3 w-3 animate-spin " />{" "}
                           Finalizing upload...
                         </p>
                       ) : null}
