@@ -35,7 +35,7 @@ const UserAccountNav = async ({
               <div className="relative aspect-square h-full w-full">
                 <Image
                   fill
-                  src={imageUrl}
+                  src={""}
                   alt="profile picture"
                   referrerPolicy="no-referrer"
                 />

@@ -11,7 +11,7 @@ export function absoluteURL(path: string) {
 
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}${path}`;
 
-  return `http://localhost:${process.env.PORT ?? 3000}${path}`;
+  return `${process.env.SITE_URL}}${path}`;
 }
 
 export function constructMetadata({
@@ -48,7 +48,7 @@ export function constructMetadata({
     },
     icons,
     metadataBase: new URL("https://quill-jet.vercel.app"),
-    themeColor: "#FFF",
+    themeColor: "#FFFFFF",
     ...(noIndex && {
       robots: {
         index: false,

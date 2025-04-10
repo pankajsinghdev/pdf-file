@@ -307,7 +307,7 @@ export const appRouter = router({
             : `${user.given_name} ${user.family_name}`,
         description: "Test Transaction",
         order_id: order.id,
-        callback_url: "http://localhost:3000/dashboard",
+        callback_url: `${process.env.SITE_URL}/dashboard`,
         prefill: {
           email: user.email,
           phone: user.phone_number,

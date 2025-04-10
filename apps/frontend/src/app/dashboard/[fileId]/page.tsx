@@ -6,9 +6,9 @@ import { db } from "@repo/db/client";
 import { notFound, redirect } from "next/navigation";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     fileId: string;
-  };
+  }>;
 }
 
 const Page = async ({ params }: PageProps) => {

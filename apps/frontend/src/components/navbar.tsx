@@ -73,15 +73,7 @@ const Navbar = async () => {
                 >
                   Pricing
                 </Link>
-                <Link
-                  href="/dashboard"
-                  className={buttonVariants({
-                    variant: "ghost",
-                    size: "sm",
-                  })}
-                >
-                  Dashboard
-                </Link>
+
                 <UserAccountNav
                   name={
                     !user.given_name || !user.family_name
@@ -89,7 +81,7 @@ const Navbar = async () => {
                       : `${user.given_name} ${user.family_name}`
                   }
                   email={user.email ?? ""}
-                  imageUrl={user.picture ?? ""}
+                  imageUrl={""}
                 />
               </>
             )}

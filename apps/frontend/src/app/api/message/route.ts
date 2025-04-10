@@ -61,10 +61,20 @@ export const POST = async (req: NextRequest) => {
     take: 10,
   });
 
-  const formattedPrevMessages = prevMessages.map((msg) => ({
-    role: msg.isUserMessage ? ("user" as const) : ("assistant" as const),
-    content: msg.text,
-  }));
+  const formattedPrevMessages = prevMessages.map(
+    (msg: {
+      userId: string | null;
+      fileId: string | null;
+      id: string;
+      createdAt: Date;
+      updatedAt: Date;
+      text: string;
+      isUserMessage: boolean;
+    }) => ({
+      role: msg.isUserMessage ? ("user" as const) : ("assistant" as const),
+      content: msg.text,
+    })
+  );
 
   const response = await openaiModel.chat.completions.create({
     model: "gpt-4o-mini",

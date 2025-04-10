@@ -22,7 +22,6 @@ const SearchParamsComponent = () => {
   const { data, error } = trpc.authCallback.useQuery(undefined, {
     select: (data) => ({ success: data.success }),
     retry: false,
-    retryDelay: 500,
   });
 
   useEffect(() => {
