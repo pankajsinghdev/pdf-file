@@ -54,7 +54,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
           >
             {typeof message.text === "string" ? (
               <div
-                className={cn("prose", {
+                className={cn("prose break-words", {
                   "text-zinc-50": message.isUserMessage,
                 })}
               >

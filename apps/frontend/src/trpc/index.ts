@@ -10,6 +10,8 @@ import { PineconeStore } from "@langchain/pinecone";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { pinecone, pineconeIndex } from "@/lib/pinecone";
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-qyery";
+import { RazorpayInstance } from "@/lib/razorpay";
+import { Phone } from "lucide-react";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -277,6 +279,90 @@ export const appRouter = router({
 
       return { success: true };
     }),
+
+  paymentProvide: privateProcedure
+    .input(
+      z.object({
+        amount: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { getUser } = getKindeServerSession();
+      const user = await getUser();
+
+      if (!user) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      const order = await RazorpayInstance.orders.create({
+        amount: Number(input.amount * 100),
+        currency: "INR",
+      });
+
+      const options = {
+        key: process.env.RAZORPAY_API_KEY,
+        amount: order.amount,
+        currency: "INR",
+        name:
+          !user.given_name || !user.family_name
+            ? "Your Account"
+            : `${user.given_name} ${user.family_name}`,
+        description: "Test Transaction",
+        order_id: order.id,
+        callback_url: "http://localhost:3000/dashboard",
+        prefill: {
+          email: user.email,
+          phone: user.phone_number,
+        },
+        theme: {
+          color: "#F37254",
+        },
+      };
+      return { options };
+    }),
+
+  // createStripeSession: privateProcedure.mutation(async ({ ctx }) => {
+  //   const { userId } = ctx;
+
+  //   const billingURL = absoluteURL("/dashboard/billing");
+
+  //   if (!userId) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  //   const dbUser = await db.user.findFirst({
+  //     where: {
+  //       id: userId,
+  //     },
+  //   });
+
+  //   if (!dbUser) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+  //   const subscriptionsPlans = await getUserSubscriptionPlan();
+
+  //   if (subscriptionsPlans.isSubscribed && dbUser.stripeCustomerId) {
+  //     const stripeSession = await stripe.billingPortal.session.create({
+  //       customer: dbUser.stripeCustomerId,
+  //       return_url: billingURL,
+  //     });
+
+  //     return { url: stripeSession.url };
+  //   }
+
+  //   const stripeSession = await stripe.checkout.sessions.create({
+  //     success_url: billingURL,
+  //     cancel_url: billingURL,
+  //     payment_method_types: ["card", "paypal"],
+  //     mode: "subscription",
+  //     billing_address_collection: "auto",
+  //     line_items: [
+  //       {
+  //         price: PLANS.find((plan) => plan.name === "Pro")?.price.priceIds.test,
+  //         quantity: 1,
+  //       },
+  //     ],
+  //     metadata: {
+  //       userId: userId,
+  //     },
+  //   });
+  //   return {url :stripeSession.url}
+  // }),
 });
 
 // Export type router type signature,

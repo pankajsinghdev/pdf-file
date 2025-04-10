@@ -46,7 +46,6 @@ const Messages = ({ fileId }: MessagesProps) => {
   ];
 
   const lastMessageRef = useRef<HTMLDivElement>(null);
-  console.log("combinedMessages", combinedMessages.length);
 
   const { ref, entry } = useIntersection({
     root: lastMessageRef.current,

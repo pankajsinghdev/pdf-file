@@ -3,7 +3,6 @@ import MaxWidthWrapper from "@/components/max-width-wrapper";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/logo";
 
 export default function Home() {
@@ -20,7 +19,7 @@ export default function Home() {
           seconds
         </h1>
         <p className="mt-5 max-w-prose text-zinc-500 sm:text-lg">
-          Quill allows you to have conversation with any pdf document. Simply
+          PdfFile allows you to have conversation with any pdf document. Simply
           upload youy file and start asking questions right away
         </p>
         <Link

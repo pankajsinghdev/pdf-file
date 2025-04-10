@@ -28,7 +28,7 @@ const SearchParamsComponent = () => {
   useEffect(() => {
     if (error && error.data) {
       if (error.data.code === "UNAUTHORIZED") {
-        router.push("/");
+        router.push("/sign-in");
       }
     }
 
