@@ -93,10 +93,12 @@ export const POST = async (req: NextRequest) => {
   \n----------------\n
   
   PREVIOUS CONVERSATION:
-  ${formattedPrevMessages.map((message) => {
-    if (message.role === "user") return `User: ${message.content}\n`;
-    return `Assistant: ${message.content}\n`;
-  })}
+  ${formattedPrevMessages.map(
+    (message: { role: "user" | "assistant"; content: string }) => {
+      if (message.role === "user") return `User: ${message.content}\n`;
+      return `Assistant: ${message.content}\n`;
+    }
+  )}
   
   \n----------------\n
   
