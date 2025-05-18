@@ -1,0 +1,10 @@
+[build]
+  base = "."
+  command = "cd apps/frontend && npx prisma generate --schema=../../packages/db/prisma/schema.prisma && next build"
+  publish = "apps/frontend/.next"
+
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs" 
