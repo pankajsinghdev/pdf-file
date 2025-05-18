@@ -125,7 +125,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
             if (!old) return { pages: [], pageParams: [] };
 
             let isAiResponseCreated = old.pages.some((page) =>
-              page.messages.some((message) => message.id === "ai-response")
+              page.messages.some((message: any) => message.id === "ai-response")
             );
             let updatedPages = old.pages.map((page) => {
               if (page === old.pages[0]) {
@@ -141,7 +141,7 @@ export const ChatContextProvider = ({ fileId, children }: Props) => {
                     ...page.messages,
                   ];
                 } else {
-                  updatedMessages = page.messages.map((message) => {
+                  updatedMessages = page.messages.map((message: any) => {
                     if (message.id === "ai-response") {
                       return {
                         ...message,
