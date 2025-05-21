@@ -49,7 +49,7 @@ export const POST = async (req: NextRequest) => {
     namespace: file.key,
   });
 
-  const results = await vectorStore.similaritySearch(message, 4);
+  const results = await vectorStore.similaritySearch(message, 6);
 
   const prevMessages = await db.message.findMany({
     where: {
@@ -83,29 +83,35 @@ export const POST = async (req: NextRequest) => {
     messages: [
       {
         role: "system",
-        content:
-          "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+        content: `You are a helpful AI assistant that analyzes PDF documents. Your task is to:
+1. Carefully analyze the provided PDF content
+2. If the question is about the document's content, provide a detailed answer based on the information found
+3. If the question is about the document's type (e.g., "What is this PDF about?"), analyze the content to determine if it's a resume, report, article, etc.
+4. If you cannot find relevant information in the provided context, respond with: "I couldn't find any relevant information in the PDF to answer your question. The PDF might not contain the information you're looking for."
+5. Always provide your answers in markdown format for better readability.`,
       },
       {
         role: "user",
-        content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
-        
-  \n----------------\n
-  
-  PREVIOUS CONVERSATION:
-  ${formattedPrevMessages.map(
-    (message: { role: "user" | "assistant"; content: string }) => {
-      if (message.role === "user") return `User: ${message.content}\n`;
-      return `Assistant: ${message.content}\n`;
-    }
-  )}
-  
-  \n----------------\n
-  
-  CONTEXT:
-  ${results.map((r) => r.pageContent).join("\n\n")}
-  
-  USER INPUT: ${message}`,
+        content: `Analyze the following PDF content and answer the user's question. If you're unsure about the document type, look for key indicators in the content.
+
+Previous conversation:
+${formattedPrevMessages.map(
+  (message: { role: "user" | "assistant"; content: string }) => {
+    if (message.role === "user") return `User: ${message.content}\n`;
+    return `Assistant: ${message.content}\n`;
+  }
+)}
+
+PDF Content:
+${results.map((r) => r.pageContent).join("\n\n")}
+
+User Question: ${message}
+
+Remember to:
+1. If this is a general question about the document (like "What is this PDF about?"), analyze the content to determine the document type and provide a summary
+2. If this is a specific question, search through the content for relevant information
+3. If you can't find relevant information, clearly state that the PDF doesn't contain the information being asked for
+4. Format your response in markdown for better readability`,
       },
     ],
   });
