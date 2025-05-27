@@ -81,7 +81,7 @@ const UserAccountNav = async ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className="cursor-pointer">
-          <LogoutLink postLogoutRedirectURL={process.env.SITE_URL}>
+          <LogoutLink postLogoutRedirectURL={process.env.NEXT_PUBLIC_SITE_URL}>
             Log out
           </LogoutLink>
         </DropdownMenuItem>

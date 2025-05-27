@@ -9,9 +9,10 @@ export function cn(...inputs: ClassValue[]) {
 export function absoluteURL(path: string) {
   if (typeof window !== "undefined") return path;
 
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}${path}`;
+  if (process.env.NEXT_PUBLIC_VERCEL_URL)
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}${path}`;
 
-  return `${process.env.SITE_URL}}${path}`;
+  return `${process.env.NEXT_PUBLIC_SITE_URL}}${path}`;
 }
 
 export function constructMetadata({

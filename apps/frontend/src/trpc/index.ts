@@ -218,7 +218,7 @@ export const appRouter = router({
         const pineconeIndex = pinecone.index("pdffileindex");
 
         const embeddings = new OpenAIEmbeddings({
-          openAIApiKey: process.env.OPENAI_API_KEY,
+          openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         });
         // Create file record in database
         await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
@@ -298,7 +298,7 @@ export const appRouter = router({
       });
 
       const options = {
-        key: process.env.RAZORPAY_API_KEY,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_API_KEY,
         amount: order.amount,
         currency: "INR",
         name:
@@ -307,7 +307,7 @@ export const appRouter = router({
             : `${user.given_name} ${user.family_name}`,
         description: "Test Transaction",
         order_id: order.id,
-        callback_url: `${process.env.SITE_URL}/dashboard`,
+        callback_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
         prefill: {
           email: user.email,
           phone: user.phone_number,

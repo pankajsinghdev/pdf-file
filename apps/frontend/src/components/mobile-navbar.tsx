@@ -89,7 +89,9 @@ const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
                 </li>
                 <li className="my-3 h-px w-full bg-gray-300" />
                 <li>
-                  <LogoutLink postLogoutRedirectURL={process.env.SITE_URL}>
+                  <LogoutLink
+                    postLogoutRedirectURL={process.env.NEXT_PUBLIC_SITE_URL}
+                  >
                     Log out
                   </LogoutLink>
                 </li>
